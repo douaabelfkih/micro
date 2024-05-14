@@ -1,0 +1,50 @@
+version: '3'
+services:
+  auth_app:
+    build: ./authentification
+    command: bash -c "python ./manage.py makemigrations && python ./manage.py migrate && python ./manage.py runserver 0.0.0.0:8001"
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
+
+  products_app:
+    build: ./products
+    command: bash -c "python3 ./manage.py makemigrations && python3 ./manage.py migrate && python3 ./manage.py runserver 0.0.0.0:8002"
+    volumes:
+      - .:/app
+    ports:
+      - "8002:8002"
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
+
+  cart_app:
+    build: ./cart
+    command: bash -c "python3 ./manage.py makemigrations && python3 ./manage.py migrate && python3 ./manage.py runserver 0.0.0.0:8003"
+    volumes:
+      - .:/app
+    ports:
+      - "8003:8003"
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
+
+  db:
+    image: postgres:10.1-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - '5432'
+
+volumes:
+  postgres_data:
